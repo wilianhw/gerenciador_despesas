@@ -2,10 +2,9 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
-import { useState } from 'react'
 import { Box } from '@mui/material'
 
-const MONTHS = [
+export const MONTHS = [
   'Janeiro',
   'Fevereiro',
   'Março',
@@ -19,17 +18,24 @@ const MONTHS = [
   'Dezembro',
 ]
 
-export default function Header() {
-  const [year, setYear] = useState<string | undefined>('2021')
-  const [month, setMonth] = useState<string | undefined>('Janeiro')
+interface IHeaderProps {
+  year: string | undefined
+  month: number | undefined
+  changeYear: (yearSelected: string) => void
+  changeMonth: (monthSelected: number) => void
+}
+
+export default function Header(props: IHeaderProps) {
+  const { year, month } = props
   const years = getYears(1900, 2099)
 
   function handleYear(event: SelectChangeEvent) {
-    setYear(event.target.value)
+    props.changeYear(event.target.value)
   }
 
   function handleMonth(event: SelectChangeEvent) {
-    setMonth(event.target.value)
+    const index = MONTHS.indexOf(event.target.value)
+    props.changeMonth(index)
   }
 
   function getYears(init: number, end: number): Array<number> {
@@ -71,7 +77,7 @@ export default function Header() {
         <Select
           labelId="input-select-month"
           id="month-selected"
-          value={month}
+          value={MONTHS[month!]}
           onChange={handleMonth}
           label="Mês"
         >

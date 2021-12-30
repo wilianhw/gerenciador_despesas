@@ -31,11 +31,16 @@ export default function Header(props: IHeaderProps) {
   const [year, setYear] = useState<string | undefined>('2021')
   const [month, setMonth] = useState<string | undefined>('Janeiro')
 
-  const years = getYears(1900, 2099)
+  const years = getYears(2020, 2021)
 
   function handleYear(event: SelectChangeEvent) {
     const currentYear = event.target.value
-    navigate(`/${currentYear}-${month}`)
+    console.log(currentYear)
+    navigate(
+      `/${currentYear}-${(MONTHS.indexOf(month!) + 1)
+        .toString()
+        .padStart(2, '0')}`,
+    )
     setYear(currentYear)
   }
 
@@ -51,7 +56,7 @@ export default function Header(props: IHeaderProps) {
 
   function getYears(init: number, end: number): Array<number> {
     let array = []
-    for (let i = init; i < end; i++) {
+    for (let i = init; i <= end; i++) {
       array.push(i)
     }
 
@@ -101,7 +106,7 @@ export default function Header(props: IHeaderProps) {
       </FormControl>
       <Box flex="1"></Box>
       <span>
-        Despesas total: <strong>{props.totalExpenditure.toFixed(2)}</strong>
+        Despesas total: <strong>{props.totalExpenditure.toFixed(2)}</strong> R$
       </span>
     </Box>
   )

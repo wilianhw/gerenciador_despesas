@@ -8,13 +8,10 @@ export interface IExpenditure {
 }
 
 export async function getDespesasEndpoint(
-  ano: string,
-  mes: number,
+  month: string,
 ): Promise<IExpenditure[]> {
   const res = await fetch(
-    `http://localhost:3001/despesas?mes=${ano}-${mes
-      .toString()
-      .padStart(2, '0')}&_sort=dia`,
+    `http://localhost:3001/despesas?mes=${month}&_sort=dia`,
   )
   return res.json()
 }

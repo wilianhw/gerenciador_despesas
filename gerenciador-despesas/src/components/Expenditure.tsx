@@ -5,22 +5,34 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { getDespesasEndpoint, IExpenditure } from '../api/Backend'
 
 interface IExpenditureProps {
-  year: string | undefined
-  month: number | undefined
+  changeTotalExpenditure: (totalValue: number) => void
 }
 
-export default function Expendidure(props: IExpenditureProps) {
+export default function Expenditure(props: IExpenditureProps) {
   const [expenditure, setExpenditure] = useState<IExpenditure[]>([])
-  const { year, month } = props
+  const { month } = useParams<{ month: string }>()
 
   useEffect(() => {
-    if (year && month) {
-      Promise.resolve(getDespesasEndpoint(year, month)).then(setExpenditure)
+    if (month) {
+      Promise.resolve(getDespesasEndpoint(month).then(setExpenditure))
     }
-  }, [month, year])
+  }, [month])
+
+  useEffect(() => {
+    if (expenditure.length > 0) {
+      let soma = 0
+
+      expenditure.reduce((last, current) => {
+        soma = last.valor + current.valor
+        return { ...current, valor: soma }
+      })
+      props.changeTotalExpenditure(soma)
+    }
+  }, [expenditure, props])
 
   return (
     <TableContainer component={'div'}>

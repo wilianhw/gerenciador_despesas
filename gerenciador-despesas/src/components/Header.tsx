@@ -3,6 +3,8 @@ import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { Box } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 export const MONTHS = [
   'Janeiro',
@@ -11,6 +13,7 @@ export const MONTHS = [
   'Abril',
   'Maio',
   'Junho',
+  'Julho',
   'Agosto',
   'Setembro',
   'Outrubro',
@@ -19,23 +22,31 @@ export const MONTHS = [
 ]
 
 interface IHeaderProps {
-  year: string | undefined
-  month: number | undefined
-  changeYear: (yearSelected: string) => void
-  changeMonth: (monthSelected: number) => void
+  totalExpenditure: number
 }
 
 export default function Header(props: IHeaderProps) {
-  const { year, month } = props
+  const navigate = useNavigate()
+
+  const [year, setYear] = useState<string | undefined>('2021')
+  const [month, setMonth] = useState<string | undefined>('Janeiro')
+
   const years = getYears(1900, 2099)
 
   function handleYear(event: SelectChangeEvent) {
-    props.changeYear(event.target.value)
+    const currentYear = event.target.value
+    navigate(`/${currentYear}-${month}`)
+    setYear(currentYear)
   }
 
   function handleMonth(event: SelectChangeEvent) {
-    const index = MONTHS.indexOf(event.target.value)
-    props.changeMonth(index)
+    const currentMonth = event.target.value
+    navigate(
+      `/${year}-${(MONTHS.indexOf(currentMonth) + 1)
+        .toString()
+        .padStart(2, '0')}`,
+    )
+    setMonth(currentMonth)
   }
 
   function getYears(init: number, end: number): Array<number> {
@@ -77,7 +88,7 @@ export default function Header(props: IHeaderProps) {
         <Select
           labelId="input-select-month"
           id="month-selected"
-          value={MONTHS[month!]}
+          value={month}
           onChange={handleMonth}
           label="Mês"
         >
@@ -90,7 +101,7 @@ export default function Header(props: IHeaderProps) {
       </FormControl>
       <Box flex="1"></Box>
       <span>
-        Despesas total: <strong>valor</strong>
+        Despesas total: <strong>{props.totalExpenditure.toFixed(2)}</strong>
       </span>
     </Box>
   )
